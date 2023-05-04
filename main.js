@@ -8,9 +8,28 @@ let stephansdom = {
 };
 
 // Karte initialisieren
-let map = L.map("map").setView([
-    stephansdom.lat, stephansdom.lng
-], 12);
+var map = L.map('map').fitWorld();
+
+map.on('locationerror', function (evt) {
+    alert(evt.message);
+}
+);
+
+map.on('locationfound', function (evt) {
+    console.log(evt)
+    let radius = Math.round(evt.accuracy);
+
+    L.marker(evt.latlng).addTo(map)
+        .bindPopup(`You are within ${(radius)} meters from this point`).openPopup();
+
+    L.circle(evt.latlng, radius).addTo(map);
+}
+);
+map.locate({setView: true, maxZoom: 16});
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+}).addTo(map);
 
 // Hintergrundlayer
 let layerControl = L.control.layers({
@@ -20,7 +39,7 @@ let layerControl = L.control.layers({
     "BasemapAT Gelände": L.tileLayer.provider("BasemapAT.terrain"),
     "BasemapAT Oberfläche": L.tileLayer.provider("BasemapAT.surface"),
     "BasemapAT Orthofoto": L.tileLayer.provider("BasemapAT.orthofoto"),
-    "BasemapAT Beschriftung": L.tileLayer.provider("BasemapAT.overlay")
+    "BasemapAT Beschriftung": L.tileLayer.provider("BasemapAT.overlay"),
 }).addTo(map);
 
 // Marker Stephansdom
