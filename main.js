@@ -18,14 +18,23 @@ map.on('locationerror', function (evt) {
 map.on('locationfound', function (evt) {
     console.log(evt)
     let radius = Math.round(evt.accuracy);
+    let circle = L.circle([0,0], 0).addTo(map);
+    let marker = L.marker([0,0]).addTo(map);
 
-    L.marker(evt.latlng).addTo(map)
-        .bindPopup(`You are within ${(radius)} meters from this point`).openPopup();
+    marker.setLatLng(evt.latlng);
+    marker.bindTooltip(`You are within ${(radius)} meters from this point`).openTooltip();
 
-    L.circle(evt.latlng, radius).addTo(map);
+    //L.circle(evt.latlng, radius).addTo(map);
+    circle.setLatLng(evt.latlng);
+    circle.setRadius(radius);
 }
 );
-map.locate({setView: true, maxZoom: 16});
+map.locate({
+    setView: true,
+    watch: true, 
+    maxZoom: 16
+    });
+
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap'
@@ -45,7 +54,8 @@ let layerControl = L.control.layers({
 // Marker Stephansdom
 L.marker([
     stephansdom.lat, stephansdom.lng
-]).addTo(map).bindPopup(stephansdom.title).openPopup();
+]).addTo(map)
+.bindTooltip(stephansdom.title).openTooltip();
 
 // Maßstab
 L.control.scale({
