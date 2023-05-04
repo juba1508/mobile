@@ -15,11 +15,12 @@ map.on('locationerror', function (evt) {
 }
 );
 
+let circle = L.circle([0,0], 0).addTo(map);
+let marker = L.marker([0,0]).addTo(map);
+
 map.on('locationfound', function (evt) {
     console.log(evt)
     let radius = Math.round(evt.accuracy);
-    let circle = L.circle([0,0], 0).addTo(map);
-    let marker = L.marker([0,0]).addTo(map);
 
     marker.setLatLng(evt.latlng);
     marker.bindTooltip(`You are within ${(radius)} meters from this point`).openTooltip();
